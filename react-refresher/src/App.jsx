@@ -1,12 +1,22 @@
-import H1 from "./H1";
+import { useState } from "react";
 
 function App() {
+
+ const [count , setCount] = useState(0)
+
+ const handleIncrement = ()=>{
+
+ }
+
+ const handleDecrement = ()=>{
+  
+ }
+
   return (
     <div>
-      <H1 title="{Student Names}"  desc="hello i am desc-1"/>
-      <H1 title="Heading-2" desc="hello i am desc-2" />
-      <H1 title="Heading-3" />
-
+     <h1>{count}</h1>
+     <button onClick={setCount(count + 1)}>➕</button>
+      <button onClick={()=>setCount(count - 1)}>➖</button>
     </div>
   );
 }
