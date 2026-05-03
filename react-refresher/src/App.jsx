@@ -24,7 +24,7 @@ const App = () => {
   
   useEffect(()=>{
     console.log("Hello from useEffect")
-  },[count , darkMode])
+  })
 
   return (
     <div
