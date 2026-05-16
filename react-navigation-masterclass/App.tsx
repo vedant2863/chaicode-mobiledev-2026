@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import StaticDrawer from './src/navigator/drawer/StaticDrawer';
+import DynamicDrawer from './src/navigator/drawer/DynamicDrawer';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -49,12 +51,6 @@ function ProfileScreen() {
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Tab.Navigator>
-        <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Reels" component={ReelsScreen} />
-        <Tab.Screen name="Profile" component={ProfileScreen} />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <DynamicDrawer/>
   );
 }
