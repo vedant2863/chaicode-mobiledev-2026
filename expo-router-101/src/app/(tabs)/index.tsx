@@ -1,14 +1,16 @@
+import { Link } from 'expo-router'
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
-const About = () => {
+const index = () => {
   return (
     <View>
-      <Text>About</Text>
+      <Text>index</Text>
+      <Link href={"/login"}>Login</Link>
     </View>
   )
 }
 
-export default About
+export default index
 
 const styles = StyleSheet.create({})
