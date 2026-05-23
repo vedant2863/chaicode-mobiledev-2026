@@ -1,9 +1,10 @@
 import { db } from "@/lib/db";
 
-type Ctx = { id: string };
+type Ctx = {id:string}
 
 export async function GET(_req: Request, { id }: Ctx) {
   try {
+    console.log(id)
     const result = await db.execute({
       sql: "SELECT * FROM users_data WHERE id = ?",
       args: [parseInt(id, 10)],
