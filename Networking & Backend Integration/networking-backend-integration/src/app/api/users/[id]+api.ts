@@ -1,31 +1,24 @@
 import { db } from "@/lib/db";
 
-type Ctx = {params:{id:string}}
+type Ctx = { id: string };
 
-export async function GET(_req:Request , {params}:Ctx){
+export async function GET(_req: Request, { id }: Ctx) {
+  try {
+    const result = await db.execute({
+      sql: "SELECT * FROM users_data WHERE id = ?",
+      args: [parseInt(id, 10)],
+    });
 
-    try {
-        const result = await db.execute({
-          sql: 'SELECT * FROM users_data WHERE id = ?',
-          args:[params.id]
-        });
-        return Response.json(result.rows);
-      } catch (error) {
-          return Response.json({
-              error: "Failed to fetch users",
-              status: 500
-          })
-      }
+    return Response.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    return Response.json(
+      { error: "Failed to fetch user", status: 500 },
+      { status: 500 }
+    );
+  }
 }
 
-export async function PATCH(request:Request , {params}:Ctx) {
-    
-}
+export async function PATCH(_request: Request, _ctx: Ctx) {}
 
-// export async function PUT(request:Request , {params}:Ctx) {
-    
-// }
-
-export async function DELETE(request:Request , {params}:Ctx) {
-    
-}
+export async function DELETE(_request: Request, _ctx: Ctx) {}
