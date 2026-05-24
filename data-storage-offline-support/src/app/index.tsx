@@ -1,76 +1,82 @@
-import * as SecureStore from "expo-secure-store";
-import React, { useState } from 'react';
+import * as SQLite from "expo-sqlite";
+import React, { useEffect, useState } from 'react';
 import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView } from "react-native-safe-area-context";
 
+
+const db = SQLite.openDatabaseSync("demo.db");
 
 const index = () => {
-  const [output , setOutput] = useState<string>('');
+  const [output, setOutput] = useState("");
 
-  const saveToken = async()=>{
-    await SecureStore.setItemAsync(
-      "token",
-      "abc123xyz"
-    );
-    setOutput("Token Saved")
-  }
-
-  const getToken = async()=>{
-    const value = await SecureStore.getItemAsync("token")
-
-    setOutput(value!)
-  }
-
-  const deleteToken = async()=>{
-    await SecureStore.deleteItemAsync("token");
-
-    setOutput("Token deleted")
-  }
-
-  const checkAvailability = async () => {
-    const available =
-      await SecureStore.isAvailableAsync();
-
-    setOutput(
-      available
-        ? "SecureStore Available"
-        : "SecureStore Not Available"
-    );
-  };
-
-  const saveObject = async () => {
-    const user = {
-      name: "Code Snippet",
-      role: "Admin",
-    };
-
-    await SecureStore.setItemAsync(
-      "user",
-      JSON.stringify(user)
-    );
-
-    setOutput("Object Saved");
-  };
-
-  const getObject = async () => {
-    const data =
-      await SecureStore.getItemAsync(
-        "user"
+  const createTable = () => {
+    db.execSync(`
+        CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        age INTEGER
       );
+      
+      `);
 
-    if (!data) {
-      setOutput("No User Found");
-      return;
-    }
+    setOutput("Table created")
+  }
 
-    const parsed = JSON.parse(data);
+  const insertUser = () => {
+    db.runSync(
+      "INSERT INTO users (name , age) VALUES (? , ?)",
+      "Suraj",
+      22
+    )
+  }
 
-    setOutput(
-      `${parsed.name} - ${parsed.role}`
+  const getUsers = () => {
+    const users = db.getAllSync(
+      "SELECT * FROM users"
     );
+
+    setOutput(JSON.stringify(users, null, 2));
+  };
+
+  const getFirstUser = () => {
+    const user = db.getFirstSync(
+      "SELECT * FROM users"
+    );
+
+    setOutput(JSON.stringify(user, null, 2));
+  };
+
+  const updateUser = () => {
+    db.runSync(
+      "UPDATE users SET age = ? WHERE id = ?",
+      25,
+      1
+    );
+
+    setOutput("User Updated");
+  };
+
+  const deleteUser = () => {
+    db.runSync(
+      "DELETE FROM users WHERE id = ?",
+      1
+    );
+
+    setOutput("User Deleted");
   };
 
 
+  const dropTable = () => {
+    db.execSync(`
+      DROP TABLE IF EXISTS users;
+    `);
+
+    setOutput("Table Dropped");
+  };
+
+  useEffect(()=>{
+    createTable()
+  },[])
 
   return (
     <SafeAreaView
@@ -91,43 +97,49 @@ const index = () => {
           marginBottom: 10,
         }}
       >
-        SecureStore Demo
+        SQLite Demo
       </Text>
 
       <Button
-        title="Save Token"
-        onPress={saveToken}
+        title="Create Table"
+        onPress={createTable}
       />
 
       <Button
-        title="Get Token"
-        onPress={getToken}
+        title="Insert User"
+        onPress={insertUser}
       />
 
       <Button
-        title="Delete Token"
-        onPress={deleteToken}
+        title="Get All Users"
+        onPress={getUsers}
       />
 
       <Button
-        title="Check Availability"
-        onPress={checkAvailability}
+        title="Get First User"
+        onPress={getFirstUser}
       />
 
       <Button
-        title="Save Object"
-        onPress={saveObject}
+        title="Update User"
+        onPress={updateUser}
       />
 
       <Button
-        title="Get Object"
-        onPress={getObject}
+        title="Delete User"
+        onPress={deleteUser}
+      />
+
+ 
+      <Button
+        title="Drop Table"
+        onPress={dropTable}
       />
 
       <View
         style={{
-          marginTop: 30,
-          padding: 20,
+          marginTop: 20,
+          padding: 16,
           borderWidth: 1,
           borderRadius: 10,
         }}
@@ -143,8 +155,9 @@ const index = () => {
         </Text>
 
         <Text
+          selectable
           style={{
-            fontSize: 16,
+            fontSize: 14,
           }}
         >
           {output}
