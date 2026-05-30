@@ -15,7 +15,7 @@ export function useGyroscope() {
       setAvailable(isAvailable);
       if (!isAvailable) return;
 
-      Gyroscope.setUpdateInterval(100);
+      Gyroscope.setUpdateInterval(16);
 
       subsciption = Gyroscope.addListener((data) => {
         setX(data.x);
