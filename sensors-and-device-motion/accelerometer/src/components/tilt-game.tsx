@@ -16,6 +16,32 @@ export function TiltGame() {
       <Text style={styles.subtitle}>
         Tilt the phone. Watch x and y change. The ball follows x and y.
       </Text>
+
+   <View style={styles.sensorBox}>
+        <Text style={styles.sensorTitle}>Accelerometer (g)</Text>
+        <Text style={styles.sensorLine}>x: {x.toFixed(2)}</Text>
+        <Text style={styles.sensorLine}>y: {y.toFixed(2)}</Text>
+        <Text style={styles.sensorLine}>z: {z.toFixed(2)}</Text>
+        <Text style={styles.sensorHint}>
+          Flat on table → z ≈ 1. Tilt left/right → x changes. Tilt forward/back
+          → y changes.
+        </Text>
+      </View>
+
+      <View style={styles.playBox}>
+      <View
+      style={[
+        styles.ball,
+        {
+          transform:[
+            {translateX:x*MOVE},
+            {translateY:y*MOVE}
+          ]
+        }
+      ]}
+      />
+      </View>
+
     </View>
   );
 }
