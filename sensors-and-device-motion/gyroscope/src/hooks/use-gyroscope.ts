@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { Accelerometer } from "expo-sensors";
+import { useState, useEffect } from "react";
+import { Gyroscope } from "expo-sensors";
 
-export function useAccelerometer() {
+export function useGyroscope() {
   const [available, setAvailable] = useState<boolean | null>(null);
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
@@ -10,23 +10,24 @@ export function useAccelerometer() {
   useEffect(() => {
     let subsciption: { remove: () => void } | undefined;
 
-    (async () => {
-      const isAvailable = await Accelerometer.isAvailableAsync();
+    void (async () => {
+      const isAvailable = await Gyroscope.isAvailableAsync();
       setAvailable(isAvailable);
-
       if (!isAvailable) return;
 
-      Accelerometer.setUpdateInterval(16);
+      Gyroscope.setUpdateInterval(100);
 
-      subsciption = Accelerometer.addListener((data) => {
+      subsciption = Gyroscope.addListener((data) => {
         setX(data.x);
         setY(data.y);
         setZ(data.z);
       });
     })();
 
-    return () => subsciption?.remove();
+    return ()=> subsciption?.remove()
   }, []);
 
-  return {available , x , y , z};
+  return {
+    available , x , y , z
+  }
 }
