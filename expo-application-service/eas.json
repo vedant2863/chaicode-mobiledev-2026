@@ -7,9 +7,9 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "env":{
-        "APP_VARIANT":"development"
-      },
+      // "env":{
+      //   "APP_VARIANT":"development"
+      // },
       "channel": "development"
     },
     "preview": {
@@ -17,15 +17,14 @@
       "android": {
         "buildType": "apk"
       },
-      "env":{
-        "APP_VARIANT":"preview"
-      },
+      // "env":{
+      //   "APP_VARIANT":"preview"
+      // },
       "channel": "preview"
     },
     "production": {
       "autoIncrement": true,
       "channel": "production"
-      
     }
   },
   "submit": {

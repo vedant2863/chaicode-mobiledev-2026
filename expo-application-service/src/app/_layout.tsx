@@ -3,6 +3,7 @@ import React from 'react';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import AppTabs from '@/components/app-tabs';
+import { UpdateBanner } from '@/components/update-banner';
 import { Colors } from '@/constants/theme';
 
 const darkTheme: Theme = {
@@ -27,6 +28,7 @@ export default function TabLayout() {
   return (
     <ThemeProvider value={darkTheme}>
       <AnimatedSplashOverlay />
+      <UpdateBanner />
       <AppTabs />
     </ThemeProvider>
   );

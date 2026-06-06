@@ -25,4 +25,5 @@ export const UI_ICONS = {
   swap: { ios: 'arrow.up.arrow.down', android: 'swap_vert', web: 'swap_vert' },
   chevronDown: { ios: 'chevron.down', android: 'expand_more', web: 'expand_more' },
   emptyHistory: { ios: 'clock.arrow.circlepath', android: 'history', web: 'history' },
+  update: { ios: 'arrow.down.circle.fill', android: 'system_update', web: 'system_update' },
 } as const;

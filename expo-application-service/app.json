@@ -1,14 +1,15 @@
 {
   "expo": {
-    "name": "eas-demo",
-    "slug": "eas-demo",
+    "name": "UnitFlow",
+    "slug": "unitflow",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "easdemo",
-    "userInterfaceStyle": "automatic",
+    "scheme": "expoapplicationservice",
+    "userInterfaceStyle": "dark",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+     
     },
     "android": {
       "adaptiveIcon": {
@@ -18,7 +19,7 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.codebysuraj.easdemo"
+      "package": "com.codebysuraj.unitflow"
     },
     "web": {
       "output": "static",
@@ -29,13 +30,14 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
+          "backgroundColor": "#09090b",
           "android": {
             "image": "./assets/images/splash-icon.png",
             "imageWidth": 76
           }
         }
-      ]
+      ],
+      "expo-sqlite"
     ],
     "experiments": {
       "typedRoutes": true,
@@ -44,14 +46,15 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "d30e9d7b-eae3-43b5-b41e-f391738ccd78"
+        "projectId": "cd4af5da-4e82-489d-b80c-575676a5b7a6"
       }
     },
     "runtimeVersion": {
       "policy": "appVersion"
     },
     "updates": {
-      "url": "https://u.expo.dev/d30e9d7b-eae3-43b5-b41e-f391738ccd78"
+      "url": "https://u.expo.dev/cd4af5da-4e82-489d-b80c-575676a5b7a6",
+      "checkAutomatically": "ON_ERROR_RECOVERY"
     }
   }
 }

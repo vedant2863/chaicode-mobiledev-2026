@@ -13,12 +13,12 @@ const zinc = {
   950: '#09090b',
 } as const;
 
-const ocean = {
-  300: '#5eead4',
-  400: '#2dd4bf',
-  500: '#14b8a6',
-  600: '#0d9488',
-  700: '#0f766e',
+const lime = {
+  300: '#bef264',
+  400: '#a3e635',
+  500: '#84cc16',
+  600: '#65a30d',
+  700: '#4d7c0f',
 } as const;
 
 export const Colors = {
@@ -28,8 +28,8 @@ export const Colors = {
     backgroundElement: zinc[900],
     backgroundSelected: zinc[800],
     textSecondary: zinc[400],
-    accent: ocean[400],
-    accentMuted: ocean[600],
+    accent: lime[400],
+    accentMuted: lime[600],
     border: zinc[700],
   },
   dark: {
@@ -38,8 +38,8 @@ export const Colors = {
     backgroundElement: zinc[900],
     backgroundSelected: zinc[800],
     textSecondary: zinc[400],
-    accent: ocean[400],
-    accentMuted: ocean[600],
+    accent: lime[400],
+    accentMuted: lime[600],
     border: zinc[700],
   },
 } as const;

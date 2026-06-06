@@ -62,7 +62,7 @@ export default function ConvertScreen() {
           Convert
         </ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
-          Online conversions — rates stored on your device
+          Offline conversions — rates stored on your device
         </ThemedText>
       </View>
 
