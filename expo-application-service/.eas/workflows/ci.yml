@@ -9,6 +9,10 @@ jobs:
     steps:
       - uses: eas/checkout
       - uses: eas/install_node_modules
-      - run : npm run lint
-      - run : npx tsc --noEmit
+      - run : npx expo lint
+      - run : npx expo typecheck
+
+      # npx expo lint
+      # npx expo typecheck
+
 
