@@ -1,9 +1,8 @@
 name: Hello World
 
-
 on:
   push:
-    branches: ['main']
+    branches: ["main"]
 
 jobs:
   Hello World:
