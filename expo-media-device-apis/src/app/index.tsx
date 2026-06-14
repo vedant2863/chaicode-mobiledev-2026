@@ -1,62 +1,111 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { Image } from 'expo-image';
+import * as MediaLibrary from 'expo-media-library';
+import { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, FlatList, Pressable, ScrollView, StyleSheet } from 'react-native';
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
+const PAGE_SIZE = 2;
+
+export default function PaginatedGalleryScreen() {
+  const [permission] = MediaLibrary.usePermissions();
+  const [assets, setAssets] = useState<MediaLibrary.Asset[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [pageCursors, setPageCursors] = useState<(string | undefined)[]>([undefined]);
+  const [loading, setLoading] = useState(false);
+
+  const loadPage = useCallback(
+    async (targetPage: number) => {
+      setLoading(true);
+      try {
+        let cursors = [...pageCursors];
+
+        while (cursors.length < targetPage) {
+          const result = await MediaLibrary.getAssetsAsync({
+            first: PAGE_SIZE,
+            after: cursors[cursors.length - 1],
+            mediaType: MediaLibrary.MediaType.photo,
+            sortBy: [[MediaLibrary.SortBy.creationTime, false]],
+          });
+
+          cursors = [...cursors, result.endCursor];
+          if (!result.hasNextPage) {
+            break;
+          }
+        }
+
+        const result = await MediaLibrary.getAssetsAsync({
+          first: PAGE_SIZE,
+          after: targetPage === 1 ? undefined : cursors[targetPage - 1],
+          mediaType: MediaLibrary.MediaType.photo,
+          sortBy: [[MediaLibrary.SortBy.creationTime, false]],
+        });
+
+        setPageCursors(cursors);
+        setAssets(result.assets);
+        setTotalPages(Math.max(1, Math.ceil(result.totalCount / PAGE_SIZE)));
+        setCurrentPage(targetPage);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [pageCursors],
+  );
+
+  useEffect(() => {
+    if (permission?.granted) {
+      loadPage(1);
+    }
+  }, [permission?.granted]);
+
+  if (!permission?.granted) {
     return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
+      <ThemedView style={styles.centered}>
+        <ThemedText>Grant media library access first.</ThemedText>
+      </ThemedView>
     );
   }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
 
-export default function HomeScreen() {
   return (
     <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+      <FlatList
+        data={assets}
+        keyExtractor={(item) => item.id}
+        numColumns={3}
+        columnWrapperStyle={styles.columnWrapper}
+        contentContainerStyle={styles.listContent}
+        renderItem={({ item }) => (
+          <Image source={{ uri: item.uri }} style={styles.thumbnail} contentFit="cover" />
+        )}
+        ListEmptyComponent={
+          loading ? (
+            <ActivityIndicator style={styles.loader} />
+          ) : (
+            <ThemedText style={styles.emptyText}>No photos found.</ThemedText>
+          )
+        }
+      />
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+      <ThemedView style={styles.pagination}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.pageRow}>
+          {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => {
+            const isActive = page === currentPage;
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
+            return (
+              <Pressable
+                key={page}
+                onPress={() => loadPage(page)}
+                disabled={loading || isActive}
+                style={({ pressed }) => [styles.pageButton, isActive && styles.pageButtonActive, pressed && !isActive && styles.pageButtonPressed]}>
+                <ThemedText type="small" themeColor={isActive ? 'background' : 'text'}>
+                  {page}
+                </ThemedText>
+              </Pressable>
+            );
+          })}
+        </ScrollView>
+      </ThemedView>
     </ThemedView>
   );
 }
@@ -64,35 +113,57 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
+    padding: 12,
   },
-  safeArea: {
+  centered: {
     flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
-    alignItems: 'center',
     justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+    padding: 24,
   },
-  title: {
+  columnWrapper: {
+    gap: 4,
+  },
+  listContent: {
+    gap: 4,
+    paddingBottom: 8,
+    flexGrow: 1,
+  },
+  thumbnail: {
+    flex: 1,
+    aspectRatio: 1,
+    borderRadius: 4,
+  },
+  loader: {
+    marginTop: 24,
+  },
+  emptyText: {
     textAlign: 'center',
+    marginTop: 24,
   },
-  code: {
-    textTransform: 'uppercase',
+  pagination: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: '#8884',
+    paddingTop: 12,
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  pageRow: {
+    flexDirection: 'row',
+    gap: 8,
+    paddingHorizontal: 4,
+  },
+  pageButton: {
+    minWidth: 36,
+    height: 36,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: '#8886',
+  },
+  pageButtonActive: {
+    backgroundColor: '#208AEF',
+    borderColor: '#208AEF',
+  },
+  pageButtonPressed: {
+    opacity: 0.7,
   },
 });
