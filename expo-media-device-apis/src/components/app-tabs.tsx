@@ -39,6 +39,11 @@ export default function AppTabs() {
         <NativeTabs.Trigger.Label>Audio</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon md={"music_note"} />
       </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="contact">
+        <NativeTabs.Trigger.Label>Contact</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon md={"contact_phone"} />
+      </NativeTabs.Trigger>
     </NativeTabs>
   );
 }
